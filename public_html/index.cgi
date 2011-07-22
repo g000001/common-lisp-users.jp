@@ -1,6 +1,10 @@
 #!/lisp/bin/gosh
+;;
 (add-load-path "/var/www/common-lisp-users.jp/lib")
+;;
 (use wiliki)
+(use wiliki.rss)
+(rss-item-description 'html)
 
 ;; Customization:
 ;;
