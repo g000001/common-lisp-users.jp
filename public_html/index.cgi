@@ -1,6 +1,6 @@
 #!/lisp/bin/gosh
 
-;;; WiLiKiをロードパスに追加
+;;; WiLiKi繧偵Ο繝ｼ繝峨ヱ繧ｹ縺ｫ霑ｽ蜉
 (add-load-path "/var/www/common-lisp-users.jp/lib")
 
 (use wiliki)
