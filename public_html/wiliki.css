@@ -1,0 +1,149 @@
+/* sample style sheet for wiliki */
+
+body {
+  font-family: verdana, arial, helvetica, sans-serif;
+  color: black;
+  background-color: #eeeedd;
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+   text-align: left;
+   color: #006655;
+   background: transparent;
+}
+h1 { font-size: 190% }
+h2 { font-size: 160% }
+h3 { font-size: 130% }
+h4 { font-size: 110% }
+h5 { font-size: 100% }
+h6 { font-size: 100%; font-style: italic }
+
+pre {
+    margin-left: 2em;
+    margin-right: 2em;
+    font-family: monospace;
+    background-color: #ddeeee;
+    border: solid thin #aacccc;
+}
+
+pre.macroerror { 
+    background-color: #ee5555;
+}
+
+blockquote {
+    border-left: solid thick #ddbbaa;
+}
+
+blockquote > blockquote {
+    border-left: solid thick #bb9988;
+}
+
+blockquote > blockquote > blockquote {
+    border-left: solid thick #997766;
+}
+
+dt { font-weight: bold }
+
+td.inbody { background: #dddddd }   /* used in formatted body */
+td.preview { background: #eeddaa }  /* used in preview page */
+
+input.navi-button {
+  margin: 0pt;
+  padding: 0pt;
+  background-color: #dddddd;
+  border: solid 1pt #777777;
+}
+
+input.search-box {
+  margin: 0pt;
+  padding: 0pt;
+  border: solid 1pt #777777;
+}
+
+input.navi-button:hover {
+  background: #ffffee;
+}
+
+span.breadcrumb-links {
+  color: #444444;
+  font-size: 90%;
+}
+
+span.wiliki-alert { background-color: #ff8080; } /* used to warn internal error */
+
+/*
+ * Comment
+ */
+
+div.comment { 
+  font-size: 90%;
+  padding: 0pt 3em 2em 3em;
+  margin: 0pt;
+}
+
+div.comment .comment-input {
+  margin-left: 20pt;
+}
+
+div.comment .comment-area {
+  width:  60ex;
+  height: 10ex;
+}
+
+div.comment > p.comment-caption {
+  border-left: solid 4px #006655;
+  border-bottom: solid 1px #006655;
+  padding: 0px 3px; margin: 8px 0px;
+}
+
+div.comment > div.comment-past > h2 {
+  font-size: 100%; font-weight: normal;
+  padding: 0pt; margin: 0pt;
+}
+
+div.comment > div.comment-past h2 {
+  font-size: 100%; font-weight: normal;
+  padding: 0pt; margin: 0pt;
+}
+
+div.comment > div.comment-past h3 {
+  font-size: 100%; font-weight: normal;
+  padding: 0pt; margin: 0pt;
+}
+
+div.comment > div.comment-past h4 {
+  font-size: 100%; font-weight: normal;
+  padding: 0pt; margin: 0pt;
+}
+
+div.comment > div.comment-past h5 {
+  font-size: 100%; font-weight: normal;
+  padding: 0pt; margin: 0pt;
+}
+
+div.comment > div.comment-past h6 {
+  font-size: 100%; font-weight: normal;
+  padding: 0pt; margin: 0pt;
+}
+
+div.comment > div.comment-past > blockquote {
+  border: none;
+  padding: 0pt 20pt;
+  margin: 0pt 0pt 5pt 0pt;
+}
+
+div.comment > div.comment-past > blockquote * {
+  padding: 0pt; margin-top: 0pt; margin-bottom: 0pt;
+}
+
+/*
+ * Tag
+ */
+
+span.tag-anchor {
+  background-color: #ffdddd;
+  font-size: 90%;
+  font-style: italic;
+}
