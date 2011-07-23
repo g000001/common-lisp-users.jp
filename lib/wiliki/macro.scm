@@ -40,15 +40,6 @@
   (use wiliki.format)
   (use wiliki.page)
   (use wiliki.core)
-;;
-(use gauche.charconv)
-(use rfc.822)
-(use rfc.http)
-(use rfc.uri)
-(use sxml.ssax)
-(use sxml.sxpath)
-(use sxml.tools)
-(use util.list)
   )
 (select-module wiliki.macro)
 
@@ -87,115 +78,6 @@
 ;;===============================================================
 ;; Reader macro definitions
 ;;
-
-;;---------------------------------------------------------------
-;; $$feed
-;;
-(define-reader-macro (feed url . args)
-  (define *item-max* 10)
-  (define *date-format* "~Y/~m/~d")
-  (define *item-format* "(~a) ~a")
-  (define *ns*
-    '((atom . "http://www.w3.org/2005/Atom")
-      (openSearch . "http://a9.com/-/spec/opensearchrss/1.0/")
-      (georss . "http://www.georss.org/georss")
-      (thr . "http://purl.org/syndication/thread/1.0")
-      (rss1 . "http://purl.org/rss/1.0/")
-      (rdf . "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-      (content . "http://purl.org/rss/1.0/modules/content/")
-      (dc . "http://purl.org/dc/elements/1.1/")
-      (foo . "bar")))
-  (define (w3cdtf->date str)
-    (define (df->nano df)
-      (string->number (string-pad-right (number->string df) 9 #\0)))
-    (and-let*
-        ((match (#/^(\d\d\d\d)(?:-(\d\d)(?:-(\d\d)(?:T(\d\d):(\d\d)(?::(\d\d)(?:\.(\d+))?)?(?:Z|([+-]\d\d):(\d\d)))?)?)?$/ str)))
-      (receive (year month day hour minute second df zh zm)
-          (apply values (map (lambda (i) (x->integer (match i))) (iota 9 1)))
-        (make-date (df->nano df)
-                   second minute hour day month year
-                   (* (if (negative? zh) -1 1)
-                      (+ (* (abs zh) 3600) (* zm 60)))))))
-  (define *feed-attributes*
-    `((atom 
-       (converter
-        ,(sxpath '(// atom:entry atom:title *text*))
-        ,(sxpath '(// atom:entry
-                   (atom:link (@ (equal? (rel "alternate"))))
-                   @ href *text*))
-        ,(sxpath '(// atom:entry atom:published *text*)))
-       (date-parser . ,w3cdtf->date))
-      (rss1
-       (converter
-        ,(sxpath '(// rss1:item rss1:title *text*))
-        ,(sxpath '(// rss1:item rss1:link *text*))
-        ,(sxpath '(// rss1:item dc:date *text*)))
-       (date-parser . ,w3cdtf->date))
-      (rss2
-       (converter
-        ,(sxpath '(// item title *text*))
-        ,(sxpath '(// item link *text*))
-        ,(sxpath '(// item pubDate *text*)))
-       (date-parser . ,rfc822-date->date))))
-  (define (feed-attr type field)
-    (cdr (assoc field (cdr (assoc type *feed-attributes*)))))
-  (define (decompose-uri url)
-    (receive (_ specific) (uri-scheme&specific url)
-      (uri-decompose-hierarchical specific)))
-  (define (authority&path?query url)
-    (define (path?query path query)
-      (with-output-to-string
-        (lambda ()
-          (display path)
-          (when query (format #t "?~a" query)))))
-    (receive (authority path query _) (decompose-uri url)
-      (values authority (path?query path query))))
-  (define (feed-get url)
-    (receive (authority path?query) (authority&path?query url)
-      (receive (status header body) (http-get authority path?query)
-        (unless (equal? status "200")
-          (error "フィードの読み込みに失敗しました。ステータスコードは~aです。"
-                 status))
-        (if (or (null? args) (null? (cdr args)))
-            body
-            (ces-convert body (cadr args))))))
-  (define (feed->sxml feed)
-    (with-input-from-string feed
-      (cut ssax:xml->sxml (current-input-port) *ns*)))
-  (define (feed-type-of sxml)
-    (define root-node ((car-sxpath '(*)) sxml))
-    (define (rss1?)
-      (eq? (sxml:name root-node) 'rdf:RDF))
-    (define (rss2?)
-      (and (eq? (sxml:name root-node) 'rss)
-           (equal? (sxml:attr root-node 'version) "2.0")))
-    (define (atom?)
-      (eq? (sxml:name root-node) 'atom:feed))
-    (cond ((rss1?) 'rss1)
-          ((rss2?) 'rss2)
-          ((atom?) 'atom)
-          (else (error "対応していない種類のフィードです。"))))
-  (define converter-title car)
-  (define converter-link cadr)
-  (define converter-date caddr)
-  (define (take-item-max nodes)
-    (let1 n (if (null? args) *item-max* (car args))
-      (take* nodes n)))
-  (let* ((feed (feed->sxml (feed-get url)))
-         (type (feed-type-of feed))
-         (conv (feed-attr type 'converter))
-         (proc (feed-attr type 'date-parser))
-         (title (converter-title conv))
-         (link (converter-link conv))
-         (date (converter-date conv)))
-    `((ul ,@(map (lambda (title link date)
-                   `(li (a (@ (href ,link))
-                           ,(format #f *item-format*
-                                    (date->string (proc date) *date-format*)
-                                    title))))
-                 (take-item-max (title feed))
-                 (take-item-max (link feed))
-                 (take-item-max (date feed)))))))
 
 ;;---------------------------------------------------------------
 ;; $$index and $$cindex
