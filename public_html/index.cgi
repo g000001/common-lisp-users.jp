@@ -204,7 +204,8 @@
 (rss-item-description 'html)
 
 (cl-users-jp:feed-whitelist
- '(#/^http:\/\/pipes.yahoo.com\/pipes\/pipe.run\?_id=9a3d4f84998e798dea7e9b5838679fb8&_render=rss/))
+ '(#/^http:\/\/pipes.yahoo.com\/pipes\/pipe.run\?_id=9a3d4f84998e798dea7e9b5838679fb8&_render=rss$/
+   #/^http:\/\/api.atnd.org\/events\/\?keyword=Common%20Lisp&format=atom$/))
 
 ;;; エントリーポイント
 
