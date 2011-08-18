@@ -87,8 +87,8 @@
 
 ;;; $$hs n
 ;;;
-;;; HyperSpecのnの項目へのリンクを表示する。L1sp.orgのリダイレクトサービスを使っ
-;;; ている。
+;;; HyperSpecのnの項目へのリンクを表示する。
+;;; L1sp.orgのリダイレクトサービスを使っている。
 
 (define-reader-macro (hs n)
   (let ((url #`"http://l1sp.org/cl/,n"))
@@ -96,10 +96,11 @@
 
 ;;; $$feed url [max [enc]]
 ;;;
-;;; urlにあるフィードのヘッドラインをmax件表示する。フィードのエンコーディングが
-;;; (gauche-character-encoding)と違う場合、encでエンコーディングを指定することが
-;;; できる。参照できるフィードは、 URLがcl-users-jp:feed-whitelistに登録されたパ
-;;; ターンのいずれかとマッチするものに限られる。
+;;; urlにあるフィードのヘッドラインをmax件表示する。
+;;; フィードのエンコーディングが(gauche-character-encoding)と違う場合、
+;;; encでエンコーディングを指定することができる。参照できるフィードは、
+;;; URLがcl-users-jp:feed-whitelistに登録されたパターンの
+;;; いずれかとマッチするものに限られる。
 
 (define cl-users-jp:feed-whitelist (make-parameter '()))
 
