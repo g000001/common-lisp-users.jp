@@ -21,15 +21,33 @@
 (use wiliki)
 (use wiliki.rss)
 
-;;; ユーティリティ
+;;;; ユーティリティ
 
+;;; フォーマッタのフッタに対する処理で使っているだけなので、
+;;; 不要なら適宜書き換えて削除すること
 (define $$ gettext)
 
-;;; フォーマッタ
+;;;; フォーマッタ
 
+;;; <wiliki-formatter>のサブクラスを作って整形処理を特殊化する
+;;; それぞれの処理はメソッドとして定義されているので、
+;;; オーバーライドすることで必要な処理だけ動作をカスタマイズできる
 (define-class <cl-users-jp-formatter> (<wiliki-formatter>) ())
 
+;;; 整形に使われるフォーマッタのインスタンスをサブクラスのものに変更する
 (wiliki:formatter (make <cl-users-jp-formatter>))
+
+;;; ヘッダ内でのページのタイトル（titleタグの中身）
+(define-method wiliki:format-head-title
+    ((fmt <cl-users-jp-formatter>) (page <wiliki-page>) . options)
+  (let ((wiliki-title (ref (wiliki) 'title))
+        (page-title (ref page 'title)))
+    (if (equal? page-title wiliki-title)
+        page-title
+        ;; 一部ページ名にサイト名を含むものがあるので削る
+        (if-let1 after (string-scan page-title #`",|wiliki-title|: " 'after)
+                 #`",after - ,wiliki-title"
+                 #`",page-title - ,wiliki-title"))))
 
 ;;; フッタ
 (define-method wiliki:format-page-footer
@@ -65,7 +83,7 @@
            ,(powered-by)))
     '()))
 
-;;; リーダーマクロ
+;;;; リーダーマクロ
 
 ;;; $$feed url [max [enc]]
 ;;;
@@ -199,7 +217,7 @@
                  (take-item-max (link feed))
                  (take-item-max (date feed)))))))
 
-;;; パラメータの設定
+;;;; パラメータの設定
 
 (rss-item-description 'html)
 
@@ -207,7 +225,7 @@
  '(#/^http:\/\/pipes.yahoo.com\/pipes\/pipe.run\?_id=9a3d4f84998e798dea7e9b5838679fb8&_render=rss$/
    #/^http:\/\/api.atnd.org\/events\/\?keyword=Common%20Lisp&format=atom$/))
 
-;;; エントリーポイント
+;;;; エントリーポイント
 
 (define (main args)
   (wiliki-main
