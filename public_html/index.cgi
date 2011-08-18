@@ -85,6 +85,15 @@
 
 ;;;; リーダーマクロ
 
+;;; $$hs n
+;;;
+;;; HyperSpecのnの項目へのリンクを表示する。L1sp.orgのリダイレクトサービスを使っ
+;;; ている。
+
+(define-reader-macro (hs n)
+  (let ((url #`"http://l1sp.org/cl/,n"))
+    `((a (@ (href ,url)) ,n))))
+
 ;;; $$feed url [max [enc]]
 ;;;
 ;;; urlにあるフィードのヘッドラインをmax件表示する。フィードのエンコーディングが

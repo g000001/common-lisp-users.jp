@@ -70,11 +70,6 @@
 (define-writer-macro (srfi n)
   (format "[http://srfi.schemers.org/srfi-~a/srfi-~a.html srfi-~a]" n n n))
 
-;; HyperSpec
-(define-reader-macro (hs n)
-  (let ((url #`"http://l1sp.org/cl/,n"))
-    `((a (@ (href ,url)) ,n))))
-
 ;;===============================================================
 ;; Reader macro definitions
 ;;
