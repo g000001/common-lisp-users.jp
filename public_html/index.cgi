@@ -85,14 +85,21 @@
 
 ;;;; リーダーマクロ
 
-;;; $$hs n
+;;; $$hs n [str]
 ;;;
-;;; HyperSpecのnの項目へのリンクを表示する。
+;;; HyperSpecのnの項目へのリンクを表示する。L1sp.org経由。
+;;; リンクの文字列は、strが指定されている場合はstr、それ以外はnになる。
+;;; nが"g:"で始まる場合、用語集の項目を参照する。
+;;; それ以外の場合はシンボルを参照する。
 ;;; L1sp.orgのリダイレクトサービスを使っている。
-
-(define-reader-macro (hs n)
-  (let ((url #`"http://l1sp.org/cl/,n"))
-    `((a (@ (href ,url)) ,n))))
+(define-reader-macro (hs n . opts)
+  (let-optionals* opts ((str #f))
+    (let* ((matched (#/^g:(.*)$/ n))
+           (prefix (if matched "glossary/" ""))
+           (n (if matched (matched 1) n))
+           (encoded (regexp-replace-all " " n "_"))
+           (url #`"http://l1sp.org/cl/,prefix,encoded"))
+      `((a (@ (href ,url)) ,(if str str n))))))
 
 ;;; $$wp term [str]
 ;;;
