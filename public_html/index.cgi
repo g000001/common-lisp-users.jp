@@ -94,6 +94,21 @@
   (let ((url #`"http://l1sp.org/cl/,n"))
     `((a (@ (href ,url)) ,n))))
 
+;;; $$wp term [str]
+;;;
+;;; Wikipediaのtermの項目へのリンクを表示する。
+;;; リンクの文字列は、strが指定されている場合はstr、それ以外はtermになる。
+;;; termが"ja:"か"en:"で始まる場合、対応する言語の記事を参照する。
+;;; 省略された場合は日本語の記事を参照する。
+(define-reader-macro (wp term . opts)
+  (let-optionals* opts ((str #f))
+    (let* ((matched (#/^(ja|en):(.*)$/ term))
+           (lang (if matched (matched 1) "ja"))
+           (term (if matched (matched 2) term))
+           (encoded (uri-encode-string term :encoding 'utf-8))
+           (url #`"http://,|lang|.wikipedia.org/wiki/,|encoded|"))
+      `((a (@ (href ,url)) ,(if str str term))))))
+
 ;;; $$feed url [max [enc]]
 ;;;
 ;;; urlにあるフィードのヘッドラインをmax件表示する。
